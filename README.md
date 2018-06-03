@@ -9,13 +9,12 @@ Only identifiers and function calls are supported.
 
 ## Usage
 ```c++
-std::stringstream ss(s);
-hil::internal::Parser p(ss);
+std::ifstream ifs("foo.hil");
+hil::ParseResult parseResult = hil::parse(ifs);
 
-hil::Context c = p.parse();
-if (!p.valid()) {
-    std::cerr << s << std::endl;
-    std::cerr << p.errorReason() << std::endl;
+if (!parseResult.valid()) {
+    std::cout << pr.errorReason << std::endl;
+    return;
 }
 ```
 
