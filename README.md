@@ -1,5 +1,7 @@
 # microhil [![AppVeyor Build Status][appveyor-build-status-svg]][appveyor-build-status] [![Travis CI Build Status][travis-build-status-svg]][travis-build-status]
-C++14 header-only parser for the [Hashicorp Interpolation Language](https://www.github.com/hashicorp/hil).
+Parses a subset of the [Hashicorp Interpolation Language](https://www.github.com/hashicorp/hil).
+
+Only identifiers and function calls are supported.
 
 ## Requirements
 - C++14-compliant compiler
@@ -7,6 +9,14 @@ C++14 header-only parser for the [Hashicorp Interpolation Language](https://www.
 
 ## Usage
 ```c++
+std::stringstream ss(s);
+hil::internal::Parser p(ss);
+
+hil::Context c = p.parse();
+if (!p.valid()) {
+    std::cerr << s << std::endl;
+    std::cerr << p.errorReason() << std::endl;
+}
 ```
 
 ## Running the tests
