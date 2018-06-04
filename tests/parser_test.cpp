@@ -28,13 +28,33 @@ TEST_CASE("parse empty")
     REQUIRE(0UL == c.hilParts.size());
 }
 
+TEST_CASE("parse single")
+{
+    hil::Context c = parse("foo");
+
+    REQUIRE(1UL == c.textParts.size());
+    REQUIRE(0UL == c.hilParts.size());
+    REQUIRE("foo" == c.textParts.at(0));
+}
+
+TEST_CASE("parse dollar")
+{
+    hil::Context c = parse("foo$foo$foo");
+
+    REQUIRE(1UL == c.textParts.size());
+    REQUIRE(0UL == c.hilParts.size());
+    REQUIRE("foo$foo$foo" == c.textParts.at(0));
+}
+
 TEST_CASE("parse ident")
 {
     hil::Context c = parse("${hoge}");
 
     REQUIRE(2UL == c.textParts.size());
     REQUIRE(1UL == c.hilParts.size());
+    REQUIRE("" == c.textParts.at(0));
     REQUIRE("hoge" == c.hilParts.at(0).as<std::string>());
+    REQUIRE("" == c.textParts.at(1));
 }
 
 TEST_CASE("parse function call")

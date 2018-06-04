@@ -1,3 +1,6 @@
+#ifndef MICROHIL_H_
+#define MICROHIL_H_
+
 #include <fstream>
 #include <iostream>
 #include <istream>
@@ -511,7 +514,6 @@ inline bool Lexer::current(char* c)
 inline void Lexer::next()
 {
     int x = is_.get();
-    std::cout << "n: " << static_cast<unsigned char>(x) << std::endl;
     if (x == '\n') {
         columnNo_ = 0;
         ++lineNo_;
@@ -554,7 +556,7 @@ inline Token Lexer::nextString()
             if (c == '{')
                 return Token(TokenType::STRING, s);
             else
-                s += "s";
+                s += "$";
         }
         dollar = false;
         if (c == '$') {
@@ -919,6 +921,14 @@ inline Context Parser::parse()
     while (true)
     {
         if (!parseText(text))
+        {
+            if (errorReason().size() > 0)
+                return context;
+            break;
+        }
+
+        nextToken(true);
+        if (token().type() == TokenType::END_OF_FILE)
             break;
 
         context.textParts.emplace_back(std::move(text));
@@ -965,8 +975,6 @@ inline bool Parser::parseText(std::string& text)
 
 inline bool Parser::parseHil(Value& currentValue)
 {
-    nextToken(true);
-    std::cout << "parseHil " << token().strValue() << std::endl;
     switch (token().type())
     {
     case TokenType::RBRACE:
@@ -994,8 +1002,7 @@ inline bool Parser::parseHil(Value& currentValue)
         }
     }
     default:
-        std::cout << "uns: " << static_cast<int>(token().type()) << std::endl;
-        addError("unsupported value: ");
+        addError("unsupported value");
         return false;
     }
 }
@@ -1016,7 +1023,6 @@ inline bool Parser::parseFunction(Value& currentValue, std::string ident)
         case TokenType::COMMA:
             break;
         case TokenType::IDENT:
-            std::cout << "parsefunction " << token().strValue() << std::endl;
             func.args.emplace_back(std::move(token().strValue()));
             break;
         default:
@@ -1031,3 +1037,5 @@ inline bool Parser::parseFunction(Value& currentValue, std::string ident)
 } // namespace internal
 
 } // namespace hil
+
+#endif // MICROHIL_H_
