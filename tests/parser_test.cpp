@@ -108,3 +108,25 @@ TEST_CASE("parse multiple items")
 
     REQUIRE("bar" == c.hilParts.at(2).as<std::string>());
 }
+
+TEST_CASE("parse period")
+{
+    hil::Context c = parse("foo${hoge}.");
+
+    REQUIRE(2UL == c.textParts.size());
+    REQUIRE(1UL == c.hilParts.size());
+    REQUIRE("foo" == c.textParts.at(0));
+    REQUIRE("hoge" == c.hilParts.at(0).as<std::string>());
+    REQUIRE("." == c.textParts.at(1));
+}
+
+TEST_CASE("parse comma")
+{
+    hil::Context c = parse("foo${hoge},");
+
+    REQUIRE(2UL == c.textParts.size());
+    REQUIRE(1UL == c.hilParts.size());
+    REQUIRE("foo" == c.textParts.at(0));
+    REQUIRE("hoge" == c.hilParts.at(0).as<std::string>());
+    REQUIRE("," == c.textParts.at(1));
+}
