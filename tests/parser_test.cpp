@@ -85,6 +85,20 @@ TEST_CASE("parse multi-argument function call")
     REQUIRE("hogera" == func.args.at(2).as<std::string>());
 }
 
+TEST_CASE("parse function call with bool")
+{
+    hil::Context c = parse("${fuga(true, hoge)}");
+
+    REQUIRE(2UL == c.textParts.size());
+    REQUIRE(1UL == c.hilParts.size());
+
+    hil::FunctionCall func = c.hilParts.at(0).as<hil::FunctionCall>();
+    REQUIRE("fuga" == func.name);
+    REQUIRE(2UL == func.args.size());
+    REQUIRE(true == func.args.at(0).as<bool>());
+    REQUIRE("hoge" == func.args.at(1).as<std::string>());
+}
+
 TEST_CASE("parse multiple items")
 {
     hil::Context c = parse("doods${foo}    ${fuga(hoge,piyo, hogera)} asd${bar}");
@@ -129,4 +143,55 @@ TEST_CASE("parse comma")
     REQUIRE("foo" == c.textParts.at(0));
     REQUIRE("hoge" == c.hilParts.at(0).as<std::string>());
     REQUIRE("," == c.textParts.at(1));
+}
+
+TEST_CASE("parse paren")
+{
+    {
+        hil::Context c = parse("(");
+        REQUIRE(1UL == c.textParts.size());
+        REQUIRE(0UL == c.hilParts.size());
+        REQUIRE("(" == c.textParts.at(0));
+    }
+
+    {
+        hil::Context c = parse(")");
+        REQUIRE(1UL == c.textParts.size());
+        REQUIRE(0UL == c.hilParts.size());
+        REQUIRE(")" == c.textParts.at(0));
+    }
+}
+
+TEST_CASE("parse bracket")
+{
+    {
+        hil::Context c = parse("[");
+        REQUIRE(1UL == c.textParts.size());
+        REQUIRE(0UL == c.hilParts.size());
+        REQUIRE("[" == c.textParts.at(0));
+    }
+
+    {
+        hil::Context c = parse("]");
+        REQUIRE(1UL == c.textParts.size());
+        REQUIRE(0UL == c.hilParts.size());
+        REQUIRE("]" == c.textParts.at(0));
+    }
+}
+
+TEST_CASE("parse brace")
+{
+    {
+        hil::Context c = parse("{");
+        REQUIRE(1UL == c.textParts.size());
+        REQUIRE(0UL == c.hilParts.size());
+        REQUIRE("{" == c.textParts.at(0));
+    }
+
+    {
+        hil::Context c = parse("}");
+        REQUIRE(1UL == c.textParts.size());
+        REQUIRE(0UL == c.hilParts.size());
+        REQUIRE("}" == c.textParts.at(0));
+    }
 }
