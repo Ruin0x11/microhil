@@ -6,6 +6,8 @@
 #include <sstream>
 #include <string>
 
+using namespace std::literals::string_literals;
+
 static hil::Context parse(const std::string& s)
 {
     std::stringstream ss(s);
@@ -194,4 +196,12 @@ TEST_CASE("parse brace")
         REQUIRE(0UL == c.hilParts.size());
         REQUIRE("}" == c.textParts.at(0));
     }
+}
+
+TEST_CASE("parse halfwidth katakana")
+{
+    hil::Context c = parse(u8"ｴｰﾃﾙ病"s);
+    REQUIRE(1UL == c.textParts.size());
+    REQUIRE(0UL == c.hilParts.size());
+    REQUIRE("ｴｰﾃﾙ病" == c.textParts.at(0));
 }
